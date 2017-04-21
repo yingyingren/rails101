@@ -4,7 +4,7 @@ class GroupsController < ApplicationController
   def index
     @groups = Group.all
   end
-  
+
   def show
     @group = Group.find(params[:id])
     @posts = @group.posts
@@ -30,16 +30,29 @@ class GroupsController < ApplicationController
   end
 
   def update
-    if @group.update(group_params)
-      redirect_to groups_path, notice: "Update Success"
-    else
-      render :edit
-    end
+  @group = Group.find(params[:id])
+
+  if current_user != @group.user
+    redirect_to root_path, alert: "You have no permission."
   end
-  def destroy
-    @group.destroy
-    redirect_to groups_path, alert: "Group deleted"
+
+  if @group.update(group_params)
+    redirect_to groups_path, notice: "Update Success"
+  else
+    render :edit
   end
+end
+def destroy
+  @group = Group.find(params[:id])
+
+  if current_user != @group.user
+    redirect_to root_path, alert: "You have no permission."
+  end
+
+  @group.destroy
+  redirect_to groups_path, alert: "Group deleted"
+end
+
 
 
 private
