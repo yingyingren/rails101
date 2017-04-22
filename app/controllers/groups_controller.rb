@@ -7,7 +7,7 @@ class GroupsController < ApplicationController
 
   def show
     @group = Group.find(params[:id])
-    @posts = @group.posts.recent
+    @posts = @group.posts.recent.paginate(:page => params[:page], :per_page => 5)
   end
 
   def edit
@@ -16,10 +16,8 @@ class GroupsController < ApplicationController
 
   def new
     @group = Group.new
-    if current_user != @group.user
-      redirect_to root_path, alert: "You have no permission."
-    end
   end
+
   def create
     @group = Group.new(group_params)
     @group.user = current_user
